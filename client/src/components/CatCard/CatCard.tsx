@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useCatCardStyles } from './styles';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -17,8 +17,8 @@ const HIDE_MICE_SECTION_BUTTON_TEXT = "Hide Mice"
 const SHOW_MICE_SECTION_BUTTON_TEXT = "Show Mice"
 
 export const CatCard: React.FC<ICatCardProps> = memo(({ id, image, fullName, description, onDeleteCat }) => {
-    const [showMiceSetion, setShowMiceSection] = useState(false);
-    const classes = useCatCardStyles({ isMouseCardOpen: showMiceSetion });
+    const [showMiceSection, setShowMiceSection] = useState(false);
+    const classes = useCatCardStyles({ isMouseCardOpen: showMiceSection });
 
     const handleDelete = useCallback(async () => {
         await onDeleteCat(id);
@@ -42,9 +42,9 @@ export const CatCard: React.FC<ICatCardProps> = memo(({ id, image, fullName, des
                         className={classes.miceButton}
                         onClick={toggleMiceSection}
                     >
-                        {showMiceSetion ? HIDE_MICE_SECTION_BUTTON_TEXT : SHOW_MICE_SECTION_BUTTON_TEXT}
+                        {showMiceSection ? HIDE_MICE_SECTION_BUTTON_TEXT : SHOW_MICE_SECTION_BUTTON_TEXT}
                         <FontAwesomeIcon
-                            icon={showMiceSetion ? faChevronUp : faChevronDown}
+                            icon={showMiceSection ? faChevronUp : faChevronDown}
                             className={classes.chevron}
                         />
                     </Button>
@@ -56,7 +56,7 @@ export const CatCard: React.FC<ICatCardProps> = memo(({ id, image, fullName, des
                     </Button>
                 </div>
             </div>
-            {showMiceSetion && <MiceSection catId={id} />}
+            {showMiceSection && <MiceSection catId={id} />}
         </div>
     );
 });

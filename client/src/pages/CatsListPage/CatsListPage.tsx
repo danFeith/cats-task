@@ -12,7 +12,7 @@ export const CatsListPage = () => {
 
     useEffect(() => {
         setSearchQuery('')
-    }, [])
+    }, [setSearchQuery])
 
     return (
         <div className={classes.container}>

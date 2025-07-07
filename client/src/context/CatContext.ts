@@ -36,8 +36,9 @@ const useCatsState = () => {
             const response = await axios.get<ICat[]>(`${SERVER_URL}/cat${currentSearchQuery ? `/search?query=${currentSearchQuery}` : `/all`}`)
 
             setCats(List(response.data));
-        } catch (err) {
+        } catch (err: unknown) {
             setError('Failed to load cats. Please try again later.');
+            console.error('Error fetching cats:', err);
         } finally {
             setLoading(false);
         }
@@ -57,11 +58,9 @@ const useCatsState = () => {
     }, [fetchCats])
 
     const deleteCat = useCallback(async (catId: number) => {
-        setLoading(true);
         await axios.delete(`${SERVER_URL}/cat/${catId}`);
         await fetchCats()
-        setLoading(false)
-    }, [fetchCats, searchQuery])
+    }, [fetchCats])
 
     const getCatsMice = useCallback(async (catId: number) => {
         setMiceLoading(true)
@@ -98,7 +97,7 @@ const useCatsState = () => {
 
     useEffect(() => {
         fetchCats();
-    }, [searchQuery]);
+    }, [fetchCats, searchQuery]);
 
     const catCapabilities = useMemo(() => ({
         cats,
@@ -118,7 +117,13 @@ const useCatsState = () => {
         loading,
         miceLoading,
         error,
+        fetchCats,
+        createCat,
+        deleteCat,
+        fetchRandomCatImage,
         randomImageLoading,
+        getCatsMice,
+        addMouseToCat,
     ])
 
     return catCapabilities

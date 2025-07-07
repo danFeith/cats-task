@@ -18,14 +18,14 @@ export const MiceSection = ({ catId }: IMiceSectionProps) => {
     const [mice, setMice] = useState(List<IMouse>([]));
     const { getCatsMice, miceLoading, addMouseToCat } = useCatsContext()
 
-    useEffect(() => {
-        fetchMice()
-    }, [])
-
     const fetchMice = useCallback(async () => {
         const mice = await getCatsMice(catId)
         setMice(List(mice))
     }, [catId, getCatsMice])
+
+    useEffect(() => {
+        fetchMice()
+    }, [catId, fetchMice])
 
     const handleAddMouse = useCallback(async () => {
         const mouseName = prompt(ENTER_MOUSE_NAME_MESSAGE);
