@@ -2,12 +2,17 @@ import { useCatsListPageStyles } from './styles';
 import { CatCard } from '../../components/CatCard';
 import { useCatsContext } from '../../context/CatContext';
 import { SearchBar } from '../../components/SearchBar';
+import { useEffect } from 'react';
 
 const LOADING_MESSAGE = 'Loading cats...'
 
 export const CatsListPage = () => {
     const classes = useCatsListPageStyles();
-    const { cats, loading, error, deleteCat, isSearchActice, setSearchQuery } = useCatsContext();
+    const { cats, loading, error, deleteCat, setSearchQuery } = useCatsContext();
+
+    useEffect(() => {
+        setSearchQuery('')
+    }, [])
 
     return (
         <div className={classes.container}>
@@ -22,7 +27,6 @@ export const CatsListPage = () => {
                     fullName={`${cat.firstName} ${cat.lastName}`}
                     description={cat.description}
                     onDeleteCat={deleteCat}
-                    isSearchActive={isSearchActice}
                 />
             ))}
         </div>

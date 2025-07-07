@@ -96,8 +96,6 @@ const useCatsState = () => {
         }
     }, []);
 
-    const isSearchActice = useMemo(() => !!searchQuery.trim(), [searchQuery])
-
     useEffect(() => {
         fetchCats();
     }, [searchQuery]);
@@ -115,14 +113,12 @@ const useCatsState = () => {
         getCatsMice,
         addMouseToCat,
         setSearchQuery,
-        isSearchActice
     }), [
         cats,
         loading,
         miceLoading,
         error,
         randomImageLoading,
-        isSearchActice
     ])
 
     return catCapabilities

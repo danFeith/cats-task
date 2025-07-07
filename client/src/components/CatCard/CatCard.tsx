@@ -11,19 +11,14 @@ interface ICatCardProps {
     fullName: string;
     description: string;
     onDeleteCat: (id: number) => void;
-    isSearchActive: boolean;
 }
 
 const HIDE_MICE_SECTION_BUTTON_TEXT = "Hide Mice"
 const SHOW_MICE_SECTION_BUTTON_TEXT = "Show Mice"
 
-export const CatCard: React.FC<ICatCardProps> = memo(({ id, image, fullName, description, onDeleteCat, isSearchActive }) => {
+export const CatCard: React.FC<ICatCardProps> = memo(({ id, image, fullName, description, onDeleteCat }) => {
     const [showMiceSetion, setShowMiceSection] = useState(false);
     const classes = useCatCardStyles({ isMouseCardOpen: showMiceSetion });
-
-    useEffect(() => {
-        if (isSearchActive) setShowMiceSection(true)
-    }, [isSearchActive])
 
     const handleDelete = useCallback(async () => {
         await onDeleteCat(id);
