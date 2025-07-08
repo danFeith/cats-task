@@ -30,7 +30,7 @@ export const CreateCatPage = () => {
             const randomImageUrl = await fetchRandomCatImage();
             setImage(randomImageUrl);
         } catch (error) {
-            console.error('Error fetching random image:', error);
+            console.error('Error while fetching random image:', error);
             setErrorMessage('Could not fetch random image. Try again.');
         }
     }, [fetchRandomCatImage]);
