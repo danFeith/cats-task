@@ -1,0 +1,131 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import constate from "constate";
+import { List } from "immutable";
+import axios from "axios";
+import { RANDOM_CAT_API_URL, SERVER_URL } from "../config";
+
+export interface ICat {
+    id: number;
+    firstName: string;
+    lastName: string;
+    description: string;
+    image: string;
+}
+
+export interface IMouse {
+    name: string;
+}
+
+
+const useCatsState = () => {
+    const [cats, setCats] = useState(List<ICat>())
+    const [loading, setLoading] = useState<boolean>(false);
+    const [miceLoading, setMiceLoading] = useState<boolean>(false);
+    const [randomImageLoading, setRandomImageLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState<string>('')
+
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchCats = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const currentSearchQuery = searchQuery?.trim()
+            const response = await axios.get<ICat[]>(`${SERVER_URL}/cat${currentSearchQuery ? `/search?query=${currentSearchQuery}` : `/all`}`)
+
+            setCats(List(response.data));
+        } catch (err: unknown) {
+            setError('Failed to load cats. Please try again later.');
+            console.error('Error fetching cats:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [searchQuery]);
+
+    const createCat = useCallback(async (catDetails: Omit<ICat, 'id'>) => {
+        const { firstName, lastName, description, image } = catDetails
+        setLoading(true);
+        await axios.post(`${SERVER_URL}/cat`, {
+            firstName,
+            lastName,
+            description,
+            image,
+        });
+        await fetchCats()
+        setLoading(false)
+    }, [fetchCats])
+
+    const deleteCat = useCallback(async (catId: number) => {
+        await axios.delete(`${SERVER_URL}/cat/${catId}`);
+        await fetchCats()
+    }, [fetchCats])
+
+    const getCatsMice = useCallback(async (catId: number) => {
+        setMiceLoading(true)
+        const mice = (await axios.get<IMouse[]>(`${SERVER_URL}/mouse/bycat/${catId}`))?.data || [];
+        setMiceLoading(false)
+        return mice;
+    }, [])
+
+    const addMouseToCat = useCallback(async (catId: number, name: string) => {
+        setMiceLoading(true)
+        await axios.post(`${SERVER_URL}/mouse`, {
+            name,
+            catId,
+        });
+        setMiceLoading(false)
+    }, [])
+
+    const fetchRandomCatImage = useCallback(async () => {
+        setRandomImageLoading(true);
+        try {
+            const res = await axios.get(`${RANDOM_CAT_API_URL}/v1/images/search?limit=1`);
+            if (res.data.length > 0 && res.data[0]?.url) {
+                return res.data[0].url;
+            } else {
+                throw new Error('Failed to fetch random image. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error fetching random cat image:', error);
+            throw new Error('Failed to fetch random image. Please try again.');
+        } finally {
+            setRandomImageLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchCats();
+    }, [fetchCats, searchQuery]);
+
+    const catCapabilities = useMemo(() => ({
+        cats,
+        loading,
+        miceLoading,
+        error,
+        fetchCats,
+        createCat,
+        deleteCat,
+        fetchRandomCatImage,
+        randomImageLoading,
+        getCatsMice,
+        addMouseToCat,
+        setSearchQuery,
+    }), [
+        cats,
+        loading,
+        miceLoading,
+        error,
+        fetchCats,
+        createCat,
+        deleteCat,
+        fetchRandomCatImage,
+        randomImageLoading,
+        getCatsMice,
+        addMouseToCat,
+    ])
+
+    return catCapabilities
+}
+
+export const [CatsProvider, useCatsContext] = constate(useCatsState);
+
