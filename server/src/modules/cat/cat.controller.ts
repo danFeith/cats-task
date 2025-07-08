@@ -1,29 +1,37 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
-import { CatService } from './cat.service';
-import { serializeCat } from 'src/models/cat/cat.serializer';
-import { CreateCatSchema } from './cat.schema';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from "@nestjs/common";
+import { CatService } from "./cat.service";
+import { CreateCatSchema } from "./cat.schema";
 
-@Controller('cat')
+@Controller("cat")
 export class CatController {
-  constructor(private readonly catService: CatService) { }
+  constructor(private readonly catService: CatService) {}
 
-  @Get('/search')
-  async search(@Query('query') query: string) {
-    return (await this.catService.searchByName(query)).map(serializeCat);
+  @Get("/search")
+  async search(@Query("query") query: string) {
+    return await this.catService.searchByName(query);
   }
 
-  @Get('/all')
+  @Get("/all")
   async findAll() {
-    return (await this.catService.findAll()).map(serializeCat);
+    return await this.catService.findAll();
   }
 
   @Post()
   async create(@Body() dto: CreateCatSchema) {
-    return await this.catService.create(dto)
+    return await this.catService.create(dto);
   }
 
-  @Delete('/:id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return await this.catService.delete(id)
+  @Delete("/:id")
+  async delete(@Param("id", ParseIntPipe) id: number) {
+    return await this.catService.delete(id);
   }
 }

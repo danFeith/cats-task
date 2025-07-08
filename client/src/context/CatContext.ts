@@ -2,9 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import constate from "constate";
 import { List } from "immutable";
 import axios from "axios";
-
-const SERVER_URL = "http://localhost:5000"
-const RANDOM_CAT_API_URL = 'https://api.thecatapi.com'
+import { RANDOM_CAT_API_URL, SERVER_URL } from "../config";
 
 export interface ICat {
     id: number;

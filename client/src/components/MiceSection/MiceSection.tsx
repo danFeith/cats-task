@@ -5,44 +5,48 @@ import { List } from "immutable";
 import { Button } from "../Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMiceSectionStyles } from "./styles";
-import { MiceList } from "../MiceList/MiceList";
+import { MiceList } from "../MiceList";
 
 interface IMiceSectionProps {
-    catId: number
+  catId: number;
 }
 
-const ENTER_MOUSE_NAME_MESSAGE = "Enter the mouse's name:"
+const ENTER_MOUSE_NAME_MESSAGE = "Enter the mouse's name:";
 
 export const MiceSection = ({ catId }: IMiceSectionProps) => {
-    const classes = useMiceSectionStyles();
-    const [mice, setMice] = useState(List<IMouse>([]));
-    const { getCatsMice, miceLoading, addMouseToCat } = useCatsContext()
+  const classes = useMiceSectionStyles();
+  const [mice, setMice] = useState(List<IMouse>([]));
+  const { getCatsMice, miceLoading, addMouseToCat } = useCatsContext();
 
-    const fetchMice = useCallback(async () => {
-        const mice = await getCatsMice(catId)
-        setMice(List(mice))
-    }, [catId, getCatsMice])
+  const fetchMice = useCallback(async () => {
+    const mice = await getCatsMice(catId);
+    setMice(List(mice));
+  }, [catId, getCatsMice]);
 
-    useEffect(() => {
-        fetchMice()
-    }, [catId, fetchMice])
+  useEffect(() => {
+    fetchMice();
+  }, [catId, fetchMice]);
 
-    const handleAddMouse = useCallback(async () => {
-        const mouseName = prompt(ENTER_MOUSE_NAME_MESSAGE);
-        if (mouseName && mouseName.trim() !== "") {
-            await addMouseToCat(catId, mouseName)
-            await fetchMice()
-        }
-    }, [catId, fetchMice, addMouseToCat]);
+  const handleAddMouse = useCallback(async () => {
+    const mouseName = prompt(ENTER_MOUSE_NAME_MESSAGE);
+    if (mouseName && mouseName.trim() !== "") {
+      await addMouseToCat(catId, mouseName);
+      await fetchMice();
+    }
+  }, [catId, fetchMice, addMouseToCat]);
 
-
-
-    return <div className={classes.miceContainer}>
-        {!miceLoading ? <>
-            <MiceList mice={mice} />
-            <Button className={classes.addMouseButton} onClick={handleAddMouse}>
-                <FontAwesomeIcon icon={faPlus} /> Add Mouse
-            </Button>
-        </> : <div className={classes.miceLoading} >Loading...</div>}
+  return (
+    <div className={classes.miceContainer}>
+      {!miceLoading ? (
+        <>
+          <MiceList mice={mice} />
+          <Button className={classes.addMouseButton} onClick={handleAddMouse}>
+            <FontAwesomeIcon icon={faPlus} /> Add Mouse
+          </Button>
+        </>
+      ) : (
+        <div className={classes.miceLoading}>Loading...</div>
+      )}
     </div>
-}
+  );
+};
